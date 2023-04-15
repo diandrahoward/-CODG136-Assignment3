@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <!--title-->
+    <title>Volcanoes of Italy</title>
+    <!--Link to Leaflet CSS document-->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+      integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+      crossorigin=""/>
+
+    <!--Link to Leaflet JavaScript API-->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+      integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+      crossorigin=""></script>
+        
+    <!--Styling document elements-->
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map { width: 100%; height: 100%}
+
+      /*Legend specific*/
+      .legend {
+        padding: 6px 8px;
+        background: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        line-height: 24px;
+        color: #555;
+      }
+
+      .legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin: 0 8px 0 0;
+        opacity: 0.7;
+      }
+
+      .legend i.icon {
+        background-size: 18px;
+        background-color: rgba(255, 255, 255, 1);
+      }
+
+    </style>
+  </head>
+
+  <body>
+    <!--Declare map div container to place the map inside on the page-->
+    <div id="map"></div>
+
+    <!--Javascript map functions-->
+    <script>
+      
+      // Set view to show Italy
+      var map = L.map('map').setView([40.821539,14.425987], 12);
+       
+      // Define layer to show CartoDB_Voyager map
+      var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+	      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        minZoom: 12,
+	      maxZoom: 18
+      }).addTo(map);
+
+      // Create lengend control
+      var legend = L.control({ position: "topright" });
+
+      // Create legend content
+      legend.onAdd = function(map) {
+        var div = L.DomUtil.create("div", "legend");
+        div.innerHTML += "<b>Symbols</b><br>";
+        div.innerHTML += "<p>";
+        div.innerHTML += '<i class="icon" style="background-image: url(active.png);background-repeat: no-repeat;"></i><span>Active</span><br>';
+        div.innerHTML += "</p>";
+        
+        return div;
+      };
+
+      legend.addTo(map);
+
+      // Define icon to  be used with active volcano
+      var activeVolcano = L.icon({
+        iconUrl: 'active.png',
+        iconSize: [25, 25],
+      });
+
+      // Function to create pop up content for each volcano
+      function onEachFeature(feature, layer) {
+        var popupContent = "<h3>" + feature.properties.name + "</h3>";
+        popupContent += "Status: "+feature.properties.status;
+        popupContent += "<br>Type: "+feature.properties.type;
+        popupContent += "<br><a href="+feature.properties.link+">Link</a>";
+        layer.bindPopup(popupContent); // Adds pop up to geoJson layer
+      }
+
+      // Function to create a marker for each volcano
+      function pointToLayer(feature, latlng) {
+
+        // If the status of the volcano is active create an active volcano marker
+        if (feature.properties.status == "Active") {
+          return L.marker(latlng, {icon: activeVolcano});
+        }
+      }
+
+      // Fetches geoJson data from GitHub
+      fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/Assignment3.json', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(json => {
+        L.geoJson(json, {
+
+          // Adds a popup to features when they are clicked
+          onEachFeature: onEachFeature,
+          // Set function that creates a marker for the volcano
+          pointToLayer: pointToLayer
+        }).addTo(map);
+      })
+    </script>
+  </body>
+</html>
