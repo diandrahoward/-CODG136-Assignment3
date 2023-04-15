@@ -71,7 +71,9 @@
         var div = L.DomUtil.create("div", "legend");
         div.innerHTML += "<b>Symbols</b><br>";
         div.innerHTML += "<p>";
-        div.innerHTML += '<i class="icon" style="background-image: url(active.png);background-repeat: no-repeat;"></i><span>Active</span><br>';
+        div.innerHTML += '<i class="icon" style="background-image: url(active.png);background-repeat: no-repeat;"></i><span>Volcano</span><br>';
+        div.innerHTML += '<i class="icon" style="background-image: url(red.png);background-repeat: no-repeat;"></i><span>Red Zone</span><br>';
+        div.innerHTML += '<i class="icon" style="background-image: url(yellow.png);background-repeat: no-repeat;"></i><span>Yellow Zone</span><br>';
         div.innerHTML += "</p>";
         
         return div;
@@ -86,7 +88,7 @@
       });
 
       // Function to create pop up content for each volcano
-      function onEachPointFeature(feature, layer) {
+      function bindVolcanoPopup(feature, layer) {
         var popupContent = "<h3>" + feature.properties.name + "</h3>";
         popupContent += "Status: "+feature.properties.status;
         popupContent += "<br>Type: "+feature.properties.type;
@@ -95,12 +97,34 @@
       }
 
       // Function to create a marker for each volcano
-      function pointToLayer(feature, latlng) {
+      function markerForVolcano(feature, latlng) {
 
         // If the status of the volcano is active create an active volcano marker
         if (feature.properties.status == "Active") {
           return L.marker(latlng, {icon: activeVolcano});
         }
+      }
+
+      function bindZonePopup(feature, layer) {
+        if (feature.properties.tipoZonaSp == "zonaRossaVulcanica") {
+          var popupContent = "<h3>Red Zone</h3>";
+          popupContent += "The area for which the evacuation is the only preventive measure of the population"
+          layer.setStyle({
+            fillColor :'#ff0000',
+            stroke: false
+          });
+        }
+        
+        if (feature.properties.tipoZonaSp == "zonaGiallaVulcanica") {
+          var popupContent = "<h3>Yellow Zone</h3>";
+          popupContent += "The area outside the red zone exposed to the significant fallout of volcanic ash and pyroclastic materials"
+          layer.setStyle({
+            fillColor :'#fff419',
+            stroke: false
+          });
+        }
+        layer.bindPopup(popupContent); // Adds pop up to geoJson layer
+
       }
 
       // Fetches geoJson data from GitHub
@@ -114,9 +138,9 @@
         L.geoJson(json, {
 
           // Adds a popup to features when they are clicked
-          onEachFeature: onEachPointFeature,
+          onEachFeature: bindVolcanoPopup,
           // Set function that creates a marker for the volcano
-          pointToLayer: pointToLayer
+          pointToLayer: markerForVolcano
         }).addTo(map);
       })
 
@@ -129,8 +153,7 @@
       .then(json => {
         L.geoJson(json, {
 
-          // Set function that creates a marker for the volcano
-          pointToLayer: pointToLayer
+          onEachFeature: bindZonePopup,
         }).addTo(map);
       })
 
@@ -143,8 +166,7 @@
       .then(json => {
         L.geoJson(json, {
 
-          // Set function that creates a marker for the volcano
-          pointToLayer: pointToLayer
+          onEachFeature: bindZonePopup,
         }).addTo(map);
       })
     </script>
