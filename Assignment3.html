@@ -59,7 +59,7 @@
       // Define layer to show CartoDB_Voyager map
       var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
-        minZoom: 12,
+        minZoom: 10,
 	      maxZoom: 18
       }).addTo(map);
 
@@ -86,7 +86,7 @@
       });
 
       // Function to create pop up content for each volcano
-      function onEachFeature(feature, layer) {
+      function onEachPointFeature(feature, layer) {
         var popupContent = "<h3>" + feature.properties.name + "</h3>";
         popupContent += "Status: "+feature.properties.status;
         popupContent += "<br>Type: "+feature.properties.type;
@@ -114,12 +114,13 @@
         L.geoJson(json, {
 
           // Adds a popup to features when they are clicked
-          onEachFeature: onEachFeature,
+          onEachFeature: onEachPointFeature,
           // Set function that creates a marker for the volcano
           pointToLayer: pointToLayer
         }).addTo(map);
+      })
 
-        fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/redzone.geojson', {
+      fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/redzone.geojson', {
         headers: {
           'Accept': 'application/json'
         }
@@ -128,13 +129,12 @@
       .then(json => {
         L.geoJson(json, {
 
-          // Adds a popup to features when they are clicked
-          onEachFeature: onEachFeature,
           // Set function that creates a marker for the volcano
           pointToLayer: pointToLayer
         }).addTo(map);
+      })
 
-        fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/yellowzone.geojson', {
+      fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/yellowzone.geojson', {
         headers: {
           'Accept': 'application/json'
         }
@@ -143,8 +143,6 @@
       .then(json => {
         L.geoJson(json, {
 
-          // Adds a popup to features when they are clicked
-          onEachFeature: onEachFeature,
           // Set function that creates a marker for the volcano
           pointToLayer: pointToLayer
         }).addTo(map);
