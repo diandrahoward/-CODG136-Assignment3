@@ -118,6 +118,36 @@
           // Set function that creates a marker for the volcano
           pointToLayer: pointToLayer
         }).addTo(map);
+
+        fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/redzone.geojson', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(json => {
+        L.geoJson(json, {
+
+          // Adds a popup to features when they are clicked
+          onEachFeature: onEachFeature,
+          // Set function that creates a marker for the volcano
+          pointToLayer: pointToLayer
+        }).addTo(map);
+
+        fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/yellowzone.geojson', {
+        headers: {
+          'Accept': 'application/json'
+        }
+      })
+      .then(response => response.json())
+      .then(json => {
+        L.geoJson(json, {
+
+          // Adds a popup to features when they are clicked
+          onEachFeature: onEachFeature,
+          // Set function that creates a marker for the volcano
+          pointToLayer: pointToLayer
+        }).addTo(map);
       })
     </script>
   </body>
