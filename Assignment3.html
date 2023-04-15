@@ -3,16 +3,18 @@
 <html>
   <head>
     <!--title-->
-    <title>Volcanoes of Italy</title>
+    <title>Vesuvius</title>
     <!--Link to Leaflet CSS document-->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
       integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
       crossorigin=""/>
+    <link rel="stylesheet" href="leaflet-sidebar/L.Control.Sidebar.css" />
 
     <!--Link to Leaflet JavaScript API-->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
       integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
       crossorigin=""></script>
+    <script src="leaflet-sidebar/L.Control.Sidebar.js"></script>
         
     <!--Styling document elements-->
     <style type="text/css">
@@ -49,6 +51,10 @@
   <body>
     <!--Declare map div container to place the map inside on the page-->
     <div id="map"></div>
+
+    <div id="sidebar">
+      <h1>Vesuvius Emergency Plan</h1>
+    </div>
 
     <!--Javascript map functions-->
     <script>
@@ -169,6 +175,16 @@
           onEachFeature: bindZonePopup,
         }).addTo(map);
       })
+      var sidebar = L.control.sidebar('sidebar', {
+        position: 'left'
+      });
+      
+
+      map.addControl(sidebar);
+
+      setTimeout(function () {
+        sidebar.show();
+      }, 500);
     </script>
   </body>
 </html>
