@@ -96,33 +96,6 @@
         iconSize: [25, 25],
       });
 
-      // Function to create pop up content for each volcano
-      function bindVolcanoPopup(feature, layer) {
-        var popupContent = "<h3>" + feature.properties.name + "</h3>";
-        popupContent += "Status: "+feature.properties.status;
-        popupContent += "<br>Type: "+feature.properties.type;
-        popupContent += "<br><a href="+feature.properties.link+">Link</a>";
-        layer.bindPopup(popupContent); // Adds pop up to geoJson layer
-      }
-
-      // Define icon to  be used with meeting points
-      var meetingPoint = L.icon({
-        iconUrl: 'meetingpoint.png',
-        iconSize: [25, 25],
-      });
-
-      // Function to create a marker for each volcano
-      function markerForPoint(feature, latlng) {
-
-        // If the status of the volcano is active create an active volcano marker
-        if (feature.properties.type == "Stratovolcano") {
-          return L.marker(latlng, {icon: activeVolcano});
-        }
-        if (feature.properties.type == "Meeting Point") {
-          return L.marker(latlng, {icon: meetingPoint});
-        }
-      }
-
       function bindZonePopup(feature, layer) {
         if (feature.properties.tipoZonaSp == "zonaRossaVulcanica") {
           var popupContent = "<h3>Red Zone</h3>";
@@ -143,6 +116,40 @@
         }
         layer.bindPopup(popupContent); // Adds pop up to geoJson layer
 
+      }
+      // Function to create pop up content for each volcano
+      function bindVolcanoPopup(feature, layer) {
+
+        if (feature.properties.type == "Stratovolcano") {
+          var popupContent = "<h3>" + feature.properties.name + "</h3>";
+          popupContent += "Status: "+feature.properties.status;
+          popupContent += "<br>Type: "+feature.properties.type;
+          popupContent += "<br><a href="+feature.properties.link+">Link</a>";
+        }
+        
+        if (feature.properties.type == "Meeting Point") {
+          var popupContent = "<h3>" + feature.properties.name + "</h3>";
+        }
+
+        layer.bindPopup(popupContent); // Adds pop up to geoJson layer
+      }
+
+      // Define icon to be used with meeting points
+      var meetingPoint = L.icon({
+        iconUrl: 'meetingpoint.png',
+        iconSize: [15, 15],
+      });
+
+      // Function to create a marker for each volcano
+      function markerForPoint(feature, latlng) {
+
+        // If the status of the volcano is active create an active volcano marker
+        if (feature.properties.type == "Stratovolcano") {
+          return L.marker(latlng, {icon: activeVolcano});
+        }
+        if (feature.properties.type == "Meeting Point") {
+          return L.marker(latlng, {icon: meetingPoint});
+        }
       }
 
       // Fetches geoJson data from GitHub
