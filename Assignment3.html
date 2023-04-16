@@ -54,6 +54,9 @@
 
     <div id="sidebar">
       <h1>Vesuvius Emergency Plan</h1>
+      <p>The red zone includes an area exposed to the invasion of pyroclastic flows (red zone 1) and an area subject to high risk of collapse of the roofs of the buildings due to the accumulation of pyroclastic deposits (red zone 2).</p>
+      <p>The yellow zone includes the territories for which it is necessary to plan the intervention of national and regional level to manage a possible emergency. It is likely, that a quantity of ashes fallen may be such as to cause the collapse of the roofs. The fallout of volcanic ash can produce, locally, other consequences (such as the clogging of sewers and the difficulty of movement of vehicles) that may also affect a very large area, outside the yellow zone.</p>
+      <p>The aim is to carry out the evacuation in 72 hours, with a simultaneous departure divided into phases from all the Municipalities of the red zone. The assisted movement of people from the "meeting areas", identified just outside the red zone, will take place with coaches made available by the Campania Region.</p>
     </div>
 
     <!--Javascript map functions-->
@@ -102,12 +105,21 @@
         layer.bindPopup(popupContent); // Adds pop up to geoJson layer
       }
 
+      // Define icon to  be used with meeting points
+      var meetingPoint = L.icon({
+        iconUrl: 'meetingpoint.png',
+        iconSize: [25, 25],
+      });
+
       // Function to create a marker for each volcano
-      function markerForVolcano(feature, latlng) {
+      function markerForPoint(feature, latlng) {
 
         // If the status of the volcano is active create an active volcano marker
-        if (feature.properties.status == "Active") {
+        if (feature.properties.type == "Stratovolcano") {
           return L.marker(latlng, {icon: activeVolcano});
+        }
+        if (feature.properties.type == "Meeting Point") {
+          return L.marker(latlng, {icon: meetingPoint});
         }
       }
 
@@ -146,7 +158,7 @@
           // Adds a popup to features when they are clicked
           onEachFeature: bindVolcanoPopup,
           // Set function that creates a marker for the volcano
-          pointToLayer: markerForVolcano
+          pointToLayer: markerForPoint
         }).addTo(map);
       })
 

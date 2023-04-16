@@ -13,6 +13,72 @@
         "type": "Stratovolcano",
         "link": "https://volcano.si.edu/volcano.cfm?vn=211020"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.635515, 40.745402]
+      },
+      "properties": {
+        "name": "Meeting Point 1",
+        "type": "Meeting Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.761693, 40.677164]
+      },
+      "properties": {
+        "name": "Meeting Point 2",
+        "type": "Meeting Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.477889, 40.694395]
+      },
+      "properties": {
+        "name": "Meeting Point 3",
+        "type": "Meeting Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.497961, 40.933743]
+      },
+      "properties": {
+        "name": "Meeting Point 4",
+        "type": "Meeting Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.271333, 40.852550]
+      },
+      "properties": {
+        "name": "Meeting Point 5",
+        "type": "Meeting Point"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [14.254877, 40.838707]
+      },
+      "properties": {
+        "name": "Meeting Point 6",
+        "type": "Meeting Point"
+      }
     }
   ]
 }
