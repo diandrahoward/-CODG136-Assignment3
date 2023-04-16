@@ -8,17 +8,18 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
       integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
       crossorigin=""/>
+    <!--Link to stylesheet for sidebar-->
     <link rel="stylesheet" href="leaflet-sidebar/L.Control.Sidebar.css" />
 
     <!--Link to Leaflet JavaScript API-->
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
       integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
       crossorigin=""></script>
+    <!--Link to sidebar plugin-->
     <script src="leaflet-sidebar/L.Control.Sidebar.js"></script>
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!-- Link to jQuery Toolkit-->
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>  
-        
+  
     <!--Styling document elements-->
     <style type="text/css">
       html { height: 100% }
@@ -55,6 +56,7 @@
     <!--Declare map div container to place the map inside on the page-->
     <div id="map"></div>
 
+    <!--Map div container for the sidebar on the page-->
     <div id="sidebar">
       <h1>Vesuvius Emergency Plan</h1>
       <p>The red zone includes an area exposed to the invasion of pyroclastic flows (red zone 1) and an area subject to high risk of collapse of the roofs of the buildings due to the accumulation of pyroclastic deposits (red zone 2).</p>
@@ -79,19 +81,20 @@
 	      maxZoom: 18
       })
 
-      // Define map with layers
+      // Define map with layer
       var map = L.map('map', {
         center: [40.821539,14.425987],
         zoom: 9,
         layers: [Esri_WorldImagery]
       });
 
+      // Define layers used in base map control
       var baseMaps = {
         "Esri World Imagery": Esri_WorldImagery,
         "Open Street Maps": OpenStreetMap_Mapnik
       };
 
-      // Add layer control to map, no overlays are used
+      // Add layer control to map
       L.control.layers(baseMaps, {}).addTo(map);
 
       // Create lengend control
@@ -117,8 +120,10 @@
         iconUrl: 'active.png',
         iconSize: [25, 25],
       });
+
       // Function to create pop up content for zones
       function bindZonePopup(feature, layer) {
+        // Pop up for red zone
         if (feature.properties.tipoZonaSp == "zonaRossaVulcanica") {
           var popupContent = "<h3>Red Zone</h3>";
           popupContent += "The area for which the evacuation is the only preventive measure of the population"
@@ -128,6 +133,7 @@
           });
         }
         
+        // Pop up for yellow zone
         if (feature.properties.tipoZonaSp == "zonaGiallaVulcanica") {
           var popupContent = "<h3>Yellow Zone</h3>";
           popupContent += "The area outside the red zone exposed to the significant fallout of volcanic ash and pyroclastic materials"
@@ -139,7 +145,8 @@
         layer.bindPopup(popupContent); // Adds pop up to geoJson layer
 
       }
-      // Function to create pop up content for each volcano
+
+      // Function to create pop up content for each point
       function bindVolcanoPopup(feature, layer) {
 
         if (feature.properties.type == "Stratovolcano") {
@@ -162,48 +169,53 @@
         iconSize: [15, 15],
       });
 
-      // Function to create a marker for each volcano
+      // Function to create a marker for each point
       function markerForPoint(feature, latlng) {
 
-        // If the status of the volcano is active create an active volcano marker
+        // If the type of the marker is Stratovolcano create an active volcano marker
         if (feature.properties.type == "Stratovolcano") {
           return L.marker(latlng, {icon: activeVolcano});
         }
+        // If the type of marker is Meeting Point create a meetingpoint marker
         if (feature.properties.type == "Meeting Point") {
           return L.marker(latlng, {icon: meetingPoint});
         }
       }
 
-      // Fetches geoJson data from GitHub
+      // Fetches geoJson data from GitHub using jquery
       $.getJSON('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/Assignment3.json', function(json) {
         var red_zone_layer = L.geoJson(json, {
      
           // Adds a popup to features when they are clicked
           onEachFeature: bindVolcanoPopup,
-          // Set function that creates a marker for the volcano
+          // Set function that creates a marker for the point
           pointToLayer: markerForPoint
         }).addTo(map);
       });
 
+      // Fetches geoJson data from GitHub using jquery
       $.getJSON('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/redzone.geojson', function(json) {
         var red_zone_layer = L.geoJson(json, {
           onEachFeature: bindZonePopup,
         }).addTo(map);
       });
 
+      // Fetches geoJson data from GitHub using jquery
       $.getJSON('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/yellowzone.geojson', function(json) {
         var red_zone_layer = L.geoJson(json, {
           onEachFeature: bindZonePopup,
         }).addTo(map);
       });
 
+      // Define sidebar
       var sidebar = L.control.sidebar('sidebar', {
         position: 'left'
       });
       
-
+      // Adds a side bar to map
       map.addControl(sidebar);
 
+      // Show side bar half a send after page has loaded
       setTimeout(function () {
         sidebar.show();
       }, 500);
