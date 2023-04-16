@@ -15,6 +15,9 @@
       integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
       crossorigin=""></script>
     <script src="leaflet-sidebar/L.Control.Sidebar.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>  
         
     <!--Styling document elements-->
     <style type="text/css">
@@ -62,15 +65,34 @@
     <!--Javascript map functions-->
     <script>
       
-      // Set view to show Italy
-      var map = L.map('map').setView([40.821539,14.425987], 12);
-       
-      // Define layer to show CartoDB_Voyager map
+      // Define layer to show Esri World Imagery map
       var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
 	      attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
         minZoom: 10,
 	      maxZoom: 18
-      }).addTo(map);
+      })
+
+      // Define layer to show Open Street map
+      var OpenStreetMap_Mapnik = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        minZoom: 10,
+	      maxZoom: 18
+      })
+
+      // Define map with layers
+      var map = L.map('map', {
+        center: [40.821539,14.425987],
+        zoom: 9,
+        layers: [Esri_WorldImagery]
+      });
+
+      var baseMaps = {
+        "Esri World Imagery": Esri_WorldImagery,
+        "Open Street Maps": OpenStreetMap_Mapnik
+      };
+
+      // Add layer control to map, no overlays are used
+      L.control.layers(baseMaps, {}).addTo(map);
 
       // Create lengend control
       var legend = L.control({ position: "topright" });
@@ -78,11 +100,11 @@
       // Create legend content
       legend.onAdd = function(map) {
         var div = L.DomUtil.create("div", "legend");
-        div.innerHTML += "<b>Symbols</b><br>";
         div.innerHTML += "<p>";
         div.innerHTML += '<i class="icon" style="background-image: url(active.png);background-repeat: no-repeat;"></i><span>Volcano</span><br>';
         div.innerHTML += '<i class="icon" style="background-image: url(red.png);background-repeat: no-repeat;"></i><span>Red Zone</span><br>';
         div.innerHTML += '<i class="icon" style="background-image: url(yellow.png);background-repeat: no-repeat;"></i><span>Yellow Zone</span><br>';
+        div.innerHTML += '<i class="icon" style="background-image: url(meetingpoint.png);background-repeat: no-repeat;"></i><span>Meeting Points</span><br>';
         div.innerHTML += "</p>";
         
         return div;
@@ -95,7 +117,7 @@
         iconUrl: 'active.png',
         iconSize: [25, 25],
       });
-
+      // Function to create pop up content for zones
       function bindZonePopup(feature, layer) {
         if (feature.properties.tipoZonaSp == "zonaRossaVulcanica") {
           var popupContent = "<h3>Red Zone</h3>";
@@ -153,47 +175,28 @@
       }
 
       // Fetches geoJson data from GitHub
-      fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/Assignment3.json', {
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(json => {
-        L.geoJson(json, {
-
+      $.getJSON('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/Assignment3.json', function(json) {
+        var red_zone_layer = L.geoJson(json, {
+     
           // Adds a popup to features when they are clicked
           onEachFeature: bindVolcanoPopup,
           // Set function that creates a marker for the volcano
           pointToLayer: markerForPoint
         }).addTo(map);
-      })
+      });
 
-      fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/redzone.geojson', {
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(json => {
-        L.geoJson(json, {
-
+      $.getJSON('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/redzone.geojson', function(json) {
+        var red_zone_layer = L.geoJson(json, {
           onEachFeature: bindZonePopup,
         }).addTo(map);
-      })
+      });
 
-      fetch('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/yellowzone.geojson', {
-        headers: {
-          'Accept': 'application/json'
-        }
-      })
-      .then(response => response.json())
-      .then(json => {
-        L.geoJson(json, {
-
+      $.getJSON('https://raw.githubusercontent.com/diandrahoward/CODG136-Assignment3/main/yellowzone.geojson', function(json) {
+        var red_zone_layer = L.geoJson(json, {
           onEachFeature: bindZonePopup,
         }).addTo(map);
-      })
+      });
+
       var sidebar = L.control.sidebar('sidebar', {
         position: 'left'
       });
@@ -204,6 +207,7 @@
       setTimeout(function () {
         sidebar.show();
       }, 500);
+
     </script>
   </body>
 </html>
